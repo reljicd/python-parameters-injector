@@ -1,0 +1,2 @@
+class NonexistentParameterException(Exception):
+    pass

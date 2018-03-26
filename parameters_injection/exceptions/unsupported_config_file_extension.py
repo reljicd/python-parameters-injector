@@ -1,0 +1,2 @@
+class UnsupportedConfigFileExtensionException(Exception):
+    pass
