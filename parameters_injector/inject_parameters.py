@@ -2,11 +2,11 @@ import pathlib
 from functools import wraps
 from typing import Callable, Dict
 
-from parameters_injection.exceptions.nonexistent_key import NonexistentKeyException
-from parameters_injection.exceptions.nonexistent_parameter import NonexistentParameterException
-from parameters_injection.exceptions.unsupported_config_file_extension import UnsupportedConfigFileExtensionException
-from parameters_injection.utils import json
-from parameters_injection.utils import yaml
+from parameters_injector.exceptions.nonexistent_key import NonexistentKeyException
+from parameters_injector.exceptions.nonexistent_parameter import NonexistentParameterException
+from parameters_injector.exceptions.unsupported_config_file_extension import UnsupportedConfigFileExtensionException
+from parameters_injector.utils import json
+from parameters_injector.utils import yaml
 
 
 def inject_parameters(config_file: str,

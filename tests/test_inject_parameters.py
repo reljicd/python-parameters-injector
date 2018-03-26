@@ -1,10 +1,10 @@
 import pytest
 
-from parameters_injection.exceptions.nonexistent_key import NonexistentKeyException
-from parameters_injection.exceptions.nonexistent_parameter import NonexistentParameterException
-from parameters_injection.exceptions.unsupported_config_file_extension import UnsupportedConfigFileExtensionException
-from parameters_injection.inject_parameters import inject_parameters
-from parameters_injection.utils.yaml import parse_yaml
+from parameters_injector.exceptions.nonexistent_key import NonexistentKeyException
+from parameters_injector.exceptions.nonexistent_parameter import NonexistentParameterException
+from parameters_injector.exceptions.unsupported_config_file_extension import UnsupportedConfigFileExtensionException
+from parameters_injector.inject_parameters import inject_parameters
+from parameters_injector.utils.yaml import parse_yaml
 
 CONFIG_FILE_YAML = 'tests/data/test_inject_parameters.yaml'
 CONFIG_FILE_JSON = 'tests/data/test_inject_parameters.json'
