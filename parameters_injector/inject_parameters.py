@@ -1,6 +1,6 @@
 import pathlib
 from functools import wraps
-from typing import Callable, Dict, List, KeysView
+from typing import Callable, Dict, KeysView
 
 from parameters_injector.exceptions.nonexistent_key import NonexistentKeyException
 from parameters_injector.exceptions.nonexistent_parameter import NonexistentParameterException
@@ -29,8 +29,9 @@ def inject_parameters(config_file: str,
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def func_wrapper(*args, **kwargs):
-            filtered_parameters = filter_explicitly_passed_parameters(parameters_to_inject=parameters,
-                                                                      explicitly_passed_parameters=kwargs.keys())
+            # Override parameters from config file wih explicitly passed parameters
+            filtered_parameters = filter_out_explicitly_passed_parameters(parameters_to_inject=parameters,
+                                                                          explicitly_passed_parameters=kwargs.keys())
 
             return func(*args, **kwargs, **filtered_parameters)
 
@@ -80,9 +81,8 @@ def get_sub_dict_for_key_in_dot_notation(dictionary: Dict, key: str) -> Dict:
         return dictionary[key]
 
 
-def filter_explicitly_passed_parameters(parameters_to_inject: Dict,
-                                        explicitly_passed_parameters: KeysView[str]) -> Dict:
-    # Override parameters from config file wih explicitly passed parameters
+def filter_out_explicitly_passed_parameters(parameters_to_inject: Dict,
+                                            explicitly_passed_parameters: KeysView[str]) -> Dict:
     for explicitly_passed_parameter in explicitly_passed_parameters:
         if explicitly_passed_parameter in parameters_to_inject:
             del parameters_to_inject[explicitly_passed_parameter]
