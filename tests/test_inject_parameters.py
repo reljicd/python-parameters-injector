@@ -90,7 +90,7 @@ def test_inject_parameters_with_key_json():
 
 
 def inject_parameters_with_key(config_file: str):
-    @inject_parameters(config_file=config_file, key='key', parameters_to_inject='parameter_2, parameter_3, parameter_4')
+    @inject_parameters(config_file=config_file, parameters_to_inject='parameter_2, parameter_3, parameter_4', key='key')
     def injected_function(parameter_1,
                           parameter_2: str = None,
                           parameter_3: str = None,
@@ -99,28 +99,6 @@ def inject_parameters_with_key(config_file: str):
         assert parameter_2 == CONFIG_DICT['key']['parameter_2']
         assert parameter_3 == CONFIG_DICT['key']['parameter_3']
         assert parameter_4 == CONFIG_DICT['key']['parameter_4']
-
-    injected_function(parameter_1=PARAMETER_1)
-
-
-def test_inject_parameters_with_zero_parameters_yaml():
-    inject_parameters_with_zero_parameters(config_file=CONFIG_FILE_YAML)
-
-
-def test_inject_parameters_with_zero_parameters_json():
-    inject_parameters_with_zero_parameters(config_file=CONFIG_FILE_JSON)
-
-
-def inject_parameters_with_zero_parameters(config_file: str):
-    @inject_parameters(config_file=config_file)
-    def injected_function(parameter_1,
-                          parameter_2: str = None,
-                          parameter_3: str = None,
-                          parameter_4: str = None):
-        assert parameter_1 == PARAMETER_1
-        assert parameter_2 is None
-        assert parameter_3 is None
-        assert parameter_4 is None
 
     injected_function(parameter_1=PARAMETER_1)
 
@@ -142,20 +120,20 @@ def inject_nonexistent_parameter(config_file: str):
 
 def test_unsupported_config_file_extension():
     with pytest.raises(UnsupportedConfigFileExtensionException):
-        @inject_parameters(config_file=CONFIG_FILE_UNSUPPORTED)
+        @inject_parameters(config_file=CONFIG_FILE_UNSUPPORTED, parameters_to_inject='parameter_2')
         def injected_function():
             pass
 
 
 def test_nonexistent_config_file():
     with pytest.raises(FileNotFoundError):
-        @inject_parameters(config_file='nonexistent_file.yaml')
+        @inject_parameters(config_file='nonexistent_file.yaml', parameters_to_inject='parameter_2')
         def injected_function():
             pass
 
 
 def test_nonexistent_key():
     with pytest.raises(NonexistentKeyException):
-        @inject_parameters(config_file=CONFIG_FILE_YAML, key='nonexistent_key', parameters_to_inject='parameter_2')
+        @inject_parameters(config_file=CONFIG_FILE_YAML, parameters_to_inject='parameter_2', key='nonexistent_key')
         def injected_function():
             pass
