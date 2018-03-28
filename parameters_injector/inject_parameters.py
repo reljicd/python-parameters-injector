@@ -20,14 +20,14 @@ def inject_parameters(config_file: str,
         Parametrized decorator
     """
     parameters = parse_parameters_from_config_file(config_file=config_file,
-                                                   parameters_to_inject=parameters_to_inject,
+                                                   parameters_to_parse=parameters_to_inject,
                                                    key=key)
 
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def func_wrapper(*args, **kwargs):
             # Override parameters from config file wih explicitly passed parameters
-            filtered_parameters = filter_out_explicitly_passed_parameters(parameters_to_inject=parameters,
+            filtered_parameters = filter_out_explicitly_passed_parameters(parameters_dict=parameters,
                                                                           explicitly_passed_parameters=kwargs.keys())
 
             return func(*args, **kwargs, **filtered_parameters)
@@ -38,7 +38,7 @@ def inject_parameters(config_file: str,
 
 
 def parse_parameters_from_config_file(config_file: str,
-                                      parameters_to_inject: str,
+                                      parameters_to_parse: str,
                                       key: str = None) -> Dict:
     config_dict = parse_config_file(config_file=config_file)
 
@@ -49,19 +49,19 @@ def parse_parameters_from_config_file(config_file: str,
             raise NonexistentKeyException
     try:
         parameters = {parameter: config_dict[parameter]
-                      for parameter in parameters_to_inject.split(', ')}
+                      for parameter in parameters_to_parse.split(', ')}
     except KeyError:
         raise NonexistentParameterException
 
     return parameters
 
 
-def filter_out_explicitly_passed_parameters(parameters_to_inject: Dict,
+def filter_out_explicitly_passed_parameters(parameters_dict: Dict,
                                             explicitly_passed_parameters: KeysView[str]) -> Dict:
     for explicitly_passed_parameter in explicitly_passed_parameters:
-        if explicitly_passed_parameter in parameters_to_inject:
-            del parameters_to_inject[explicitly_passed_parameter]
-    return parameters_to_inject
+        if explicitly_passed_parameter in parameters_dict:
+            del parameters_dict[explicitly_passed_parameter]
+    return parameters_dict
 
 
 def get_sub_dict_for_key_in_dot_notation(dictionary: Dict, key: str) -> Dict:
