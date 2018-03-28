@@ -1,12 +1,9 @@
-import pathlib
 from functools import wraps
 from typing import Callable, Dict, KeysView
 
 from parameters_injector.exceptions.nonexistent_key import NonexistentKeyException
 from parameters_injector.exceptions.nonexistent_parameter import NonexistentParameterException
-from parameters_injector.exceptions.unsupported_config_file_extension import UnsupportedConfigFileExtensionException
-from parameters_injector.utils import json
-from parameters_injector.utils import yaml
+from parameters_injector.utils.parse_config_file import parse_config_file
 
 
 def inject_parameters(config_file: str,
@@ -59,17 +56,12 @@ def parse_parameters_from_config_file(config_file: str,
     return parameters
 
 
-def parse_config_file(config_file: str) -> Dict:
-    config_file_suffix = pathlib.Path(config_file).suffix
-
-    if config_file_suffix == '.yaml':
-        config_dict = yaml.parse_yaml(config_file)
-    elif config_file_suffix == '.json':
-        config_dict = json.parse_json(config_file)
-    else:
-        raise UnsupportedConfigFileExtensionException
-
-    return config_dict
+def filter_out_explicitly_passed_parameters(parameters_to_inject: Dict,
+                                            explicitly_passed_parameters: KeysView[str]) -> Dict:
+    for explicitly_passed_parameter in explicitly_passed_parameters:
+        if explicitly_passed_parameter in parameters_to_inject:
+            del parameters_to_inject[explicitly_passed_parameter]
+    return parameters_to_inject
 
 
 def get_sub_dict_for_key_in_dot_notation(dictionary: Dict, key: str) -> Dict:
@@ -79,11 +71,3 @@ def get_sub_dict_for_key_in_dot_notation(dictionary: Dict, key: str) -> Dict:
         return get_sub_dict_for_key_in_dot_notation(dictionary=dictionary[top_key], key=bottom_key)
     else:
         return dictionary[key]
-
-
-def filter_out_explicitly_passed_parameters(parameters_to_inject: Dict,
-                                            explicitly_passed_parameters: KeysView[str]) -> Dict:
-    for explicitly_passed_parameter in explicitly_passed_parameters:
-        if explicitly_passed_parameter in parameters_to_inject:
-            del parameters_to_inject[explicitly_passed_parameter]
-    return parameters_to_inject
